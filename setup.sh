@@ -1,46 +1,38 @@
 #!/usr/bin/env bash
 
-set -e
+set -euo pipefail
 
-usage()
-{
-    echo "Usage: bash ./setup.sh [--install| --uninstall]"
+usage() {
+  echo "Usage: bash ./setup.sh [--install|--uninstall] [--unattended]"
 }
 
-help()
-{
-    usage
-    echo "---------------------------------"
-    echo "setup dotfile! install or uninstall"
-    echo 
-    echo "--install install dotfile in this user"
-    echo "--uninstall uninstall dotfile in this user"
-    echo "More information: https://github.com/LuYanFCP/dotfile"
+INSTALL=false
+UNINSTALL=false
+UNATTENDED=false
 
-}
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --install) INSTALL=true; shift ;;
+    --uninstall) UNINSTALL=true; shift ;;
+    --unattended) UNATTENDED=true; shift ;;
+    -h|--help) usage; exit 0 ;;
+    *) echo "Unknown arg: $1"; usage; exit 1 ;;
+  esac
+done
 
-install()
-{
-    
-}
+ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
-
-case "$1" in 
-    "--usage")
-        usage
-        ;;
-    "--help")
-        help
-        ;;
-    "--install")
-        install
-        ;;
-    "--uninstall")
-        uninstall
-        ;;
-    *)
-        echo "error unknown parameter $1"
-        usage
-        exit 1
-        ;;
-esac
+if $INSTALL; then
+  chmod +x "${ROOT_DIR}/bin/install"
+  if $UNATTENDED; then
+    "${ROOT_DIR}/bin/install" --unattended
+  else
+    "${ROOT_DIR}/bin/install"
+  fi
+elif $UNINSTALL; then
+  chmod +x "${ROOT_DIR}/bin/uninstall"
+  "${ROOT_DIR}/bin/uninstall"
+else
+  usage
+  exit 1
+fi
