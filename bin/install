@@ -1,0 +1,28 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+# Determine repository root
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
+
+export DOTFILES_REPO_ROOT="${REPO_ROOT}"
+
+# Allow unattended mode
+UNATTENDED="false"
+for arg in "$@"; do
+  case "$arg" in
+    --unattended) UNATTENDED="true" ;;
+  esac
+done
+
+source "${REPO_ROOT}/scripts/common.sh"
+
+log_info "Starting dotfiles installation"
+
+# Plugin-based install flow
+"${REPO_ROOT}/scripts/plugins/run_plugins.sh" ${UNATTENDED:+--unattended}
+
+log_success "Dotfiles installation finished"
+
+
