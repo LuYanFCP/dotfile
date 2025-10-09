@@ -9,6 +9,8 @@ source "${REPO_ROOT}/scripts/common.sh"
 ONLY=""
 SKIP=""
 UNATTENDED=false
+DEBUG=false
+LOG_FILE=""
 LIST=false
 
 usage() {
@@ -22,6 +24,8 @@ while [[ $# -gt 0 ]]; do
     --only) ONLY="${2:-}"; shift 2 ;;
     --skip) SKIP="${2:-}"; shift 2 ;;
     --unattended) UNATTENDED=true; shift ;;
+    --debug) DEBUG=true; shift ;;
+    --log-file) LOG_FILE="$2"; shift 2 ;;
     --list) LIST=true; shift ;;
     -h|--help) usage; exit 0 ;;
     *) log_error "Unknown arg: $1"; usage; exit 1 ;;
@@ -29,6 +33,10 @@ while [[ $# -gt 0 ]]; do
 done
 
 export DOTFILES_UNATTENDED="$UNATTENDED"
+export DOTFILES_DEBUG="$DEBUG"
+if [[ -n "$LOG_FILE" ]]; then
+  export DOTFILES_LOG_FILE="$LOG_FILE"
+fi
 
 IFS=',' read -r -a ONLY_ARR <<< "${ONLY}"
 IFS=',' read -r -a SKIP_ARR <<< "${SKIP}"
@@ -44,7 +52,8 @@ should_run() {
   return 0
 }
 
-mapfile -t plugin_files < <(ls -1 "${SCRIPT_DIR}"/*.sh | sort)
+# Only load plugin files (e.g., 10-core.sh). Exclude loader scripts.
+mapfile -t plugin_files < <(find "${SCRIPT_DIR}" -maxdepth 1 -type f -name '[0-9][0-9]-*.sh' | sort)
 
 if $LIST; then
   for f in "${plugin_files[@]}"; do
@@ -57,13 +66,14 @@ fi
 for f in "${plugin_files[@]}"; do
   id="$(basename "$f" .sh)"
   if ! should_run "$id"; then
-    log_info "Skipping plugin: $id"
+    log_debug "Skipping plugin: $id"
     continue
   fi
   # shellcheck source=/dev/null
   source "$f"
   if declare -F plugin_run >/dev/null 2>&1; then
     log_info "Running plugin: $id"
+    log_debug "Invoking plugin_run from $f"
     plugin_run
     # unset function to avoid collisions
     unset -f plugin_run || true

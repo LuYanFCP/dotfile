@@ -37,7 +37,8 @@ plugin_run() {
 
   # ensure zplug is available (zshrc will install if missing too)
   if [[ ! -d "${HOME}/.zplug" ]]; then
-    curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh || true
+    # Use zsh -f to avoid sourcing rc files during installer, preventing recursion
+    curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh -f || true
   fi
 
   log_success "zsh and zplug ready"

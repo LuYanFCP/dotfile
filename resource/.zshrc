@@ -32,7 +32,8 @@ autoload -U compinit && compinit
 
 export ZPLUG_HOME="${HOME}/.zplug"
 if [[ ! -d "$ZPLUG_HOME" ]]; then
-  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
+  # Use zsh -f to avoid sourcing rc files during installer, preventing recursion
+  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh -f
 fi
 source "$ZPLUG_HOME/init.zsh"
 
@@ -40,6 +41,9 @@ source "$ZPLUG_HOME/init.zsh"
 zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "zsh-users/zsh-completions"
+
+# themes
+zplug "themes/crunch", from:oh-my-zsh, as:theme
 
 # Optional: fast directory navigation and helpful tools
 zplug "rupa/z", as:plugin, use:"*.zsh"

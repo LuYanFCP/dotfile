@@ -7,9 +7,39 @@ COLOR_GREEN='\033[0;32m'
 COLOR_YELLOW='\033[0;33m'
 COLOR_RED='\033[0;31m'
 
-log_info() { echo -e "${COLOR_YELLOW}[INFO]${COLOR_RESET} $*"; }
-log_success() { echo -e "${COLOR_GREEN}[OK]${COLOR_RESET} $*"; }
-log_error() { echo -e "${COLOR_RED}[ERR]${COLOR_RESET} $*" 1>&2; }
+log_write() {
+  local level="$1"
+  shift
+  local message="$*"
+  local timestamp
+  timestamp="$(date '+%Y-%m-%dT%H:%M:%S%z')"
+  if [[ -n "${DOTFILES_LOG_FILE:-}" ]]; then
+    mkdir -p "$(dirname "${DOTFILES_LOG_FILE}")"
+    printf '%s [%s] %s\n' "$timestamp" "$level" "$message" >> "${DOTFILES_LOG_FILE}"
+  fi
+}
+
+log_info() {
+  log_write INFO "$*"
+  echo -e "${COLOR_YELLOW}[INFO]${COLOR_RESET} $*"
+}
+
+log_success() {
+  log_write SUCCESS "$*"
+  echo -e "${COLOR_GREEN}[OK]${COLOR_RESET} $*"
+}
+
+log_error() {
+  log_write ERROR "$*"
+  echo -e "${COLOR_RED}[ERR]${COLOR_RESET} $*" 1>&2
+}
+
+log_debug() {
+  if [[ "${DOTFILES_DEBUG:-false}" == "true" ]]; then
+    log_write DEBUG "$*"
+    echo -e "${COLOR_YELLOW}[DBG]${COLOR_RESET} $*"
+  fi
+}
 
 is_command() { command -v "$1" >/dev/null 2>&1; }
 
