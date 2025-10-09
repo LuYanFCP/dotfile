@@ -3,12 +3,14 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: $0 --host user@server [--path ~/.dotfiles] [--unattended]"
+  echo "Usage: $0 --host user@server [--path ~/.dotfiles] [--unattended] [--debug] [--log-file FILE]"
 }
 
 HOST=""
 REMOTE_PATH="~/.dotfiles"
 UNATTENDED="false"
+DEBUG="false"
+LOG_FILE=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -18,6 +20,10 @@ while [[ $# -gt 0 ]]; do
       REMOTE_PATH="$2"; shift 2 ;;
     --unattended)
       UNATTENDED="true"; shift ;;
+    --debug)
+      DEBUG="true"; shift ;;
+    --log-file)
+      LOG_FILE="$2"; shift 2 ;;
     -h|--help)
       usage; exit 0 ;;
     *)
@@ -32,9 +38,29 @@ fi
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
+if [[ "${DEBUG}" == "true" ]]; then
+  set -x
+fi
+
 rsync -a --delete --exclude ".git" --exclude "wezterm/static/back.jpg" "${REPO_ROOT}/" "${HOST}:${REMOTE_PATH}/"
 
-ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${HOST}" "bash -lc 'cd ${REMOTE_PATH} && chmod +x bin/install && bin/install ${UNATTENDED:+--unattended}'"
+REMOTE_ARGS=()
+if [[ "${UNATTENDED}" == "true" ]]; then
+  REMOTE_ARGS+=("--unattended")
+fi
+if [[ "${DEBUG}" == "true" ]]; then
+  REMOTE_ARGS+=("--debug")
+fi
+if [[ -n "${LOG_FILE}" ]]; then
+  REMOTE_ARGS+=("--log-file" "${LOG_FILE}")
+fi
+
+REMOTE_CMD_ARGS=""
+for arg in "${REMOTE_ARGS[@]}"; do
+  REMOTE_CMD_ARGS+=" $(printf '%q' "$arg")"
+done
+
+ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${HOST}" "bash -lc 'cd ${REMOTE_PATH} && mkdir -p \"\$(dirname \"${LOG_FILE}\")\" 2>/dev/null || true && chmod +x bin/install && bin/install${REMOTE_CMD_ARGS}'"
 
 echo "Remote deploy complete"
 

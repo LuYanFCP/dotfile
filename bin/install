@@ -8,11 +8,20 @@ REPO_ROOT="$(cd "${SCRIPT_DIR}/.." && pwd)"
 
 export DOTFILES_REPO_ROOT="${REPO_ROOT}"
 
-# Allow unattended mode
+# Allow flags
 UNATTENDED="false"
-for arg in "$@"; do
-  case "$arg" in
-    --unattended) UNATTENDED="true" ;;
+DEBUG="false"
+LOG_FILE=""
+
+while [[ $# -gt 0 ]]; do
+  case "$1" in
+    --unattended) UNATTENDED="true"; shift ;;
+    --debug) DEBUG="true"; shift ;;
+    --log-file) LOG_FILE="$2"; shift 2 ;;
+    -h|--help)
+      echo "Usage: bin/install [--unattended] [--debug] [--log-file path]";
+      exit 0 ;;
+    *) echo "Unknown argument: $1"; exit 1 ;;
   esac
 done
 
@@ -21,7 +30,18 @@ source "${REPO_ROOT}/scripts/common.sh"
 log_info "Starting dotfiles installation"
 
 # Plugin-based install flow
-"${REPO_ROOT}/scripts/plugins/run_plugins.sh" ${UNATTENDED:+--unattended}
+PLUGIN_ARGS=()
+if [[ "${UNATTENDED}" == "true" ]]; then
+  PLUGIN_ARGS+=("--unattended")
+fi
+if [[ "${DEBUG}" == "true" ]]; then
+  PLUGIN_ARGS+=("--debug")
+fi
+if [[ -n "${LOG_FILE}" ]]; then
+  PLUGIN_ARGS+=("--log-file" "${LOG_FILE}")
+fi
+
+"${REPO_ROOT}/scripts/plugins/run_plugins.sh" "${PLUGIN_ARGS[@]}"
 
 log_success "Dotfiles installation finished"
 
