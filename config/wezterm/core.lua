@@ -20,7 +20,7 @@ function core.setup()
 	-- For example, changing the color scheme:
 	-- config.color_scheme = 'Catppuccin Mocha'
 	config.font = wezterm.font("Menlo", { weight = 'Bold'})
-  config.font_size = 14
+	config.font_size = 14
 	config.window_background_image = home_dir .. "/.config/wezterm/static/back.jpg"
 
 	config.window_background_image_hsb = {
@@ -41,3 +41,5 @@ function core.setup()
 end
 
 return core
+
+
