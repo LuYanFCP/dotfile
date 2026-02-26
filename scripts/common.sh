@@ -59,6 +59,27 @@ backup_file() {
   fi
 }
 
+# Ensure a symlink points to the expected source.
+# If the destination already points to the same source, do nothing.
+# If the destination exists but differs, back it up once and relink.
+ensure_symlink() {
+  local source="$1"
+  local target="$2"
+
+  ensure_dir "$(dirname "$target")"
+
+  if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "$source" ]]; then
+    log_debug "Symlink already up to date: $target -> $source"
+    return 0
+  fi
+
+  if [[ -e "$target" || -L "$target" ]]; then
+    backup_file "$target"
+  fi
+
+  ln -snf "$source" "$target"
+}
+
 # Detect OS kernel and distro ID (Ubuntu/Fedora/etc.)
 detect_os() {
   local kernel

@@ -9,6 +9,13 @@ plugin_run() {
   detect_os
   log_info "Installing uv for ${DOTFILES_OS}/${DOTFILES_DISTRO}"
 
+  # Skip installer if uv is already available.
+  if is_command uv; then
+    log_info "uv is already installed; skipping"
+    log_success "uv installed (ensure ~/.local/bin is on PATH)"
+    return 0
+  fi
+
   if [[ "${DOTFILES_OS}" == "macos" ]]; then
     if is_command brew; then
       brew install uv || true

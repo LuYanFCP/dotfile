@@ -18,7 +18,11 @@ plugin_run() {
   if ! getent group docker >/dev/null 2>&1; then
     sudo groupadd docker || true
   fi
-  sudo usermod -aG docker "$USER" || true
+  if id -nG "$USER" | tr ' ' '\n' | grep -qx 'docker'; then
+    log_info "User ${USER} is already in docker group; skipping"
+  else
+    sudo usermod -aG docker "$USER" || true
+  fi
 
   log_success "Added ${USER} to docker group (re-login or run: newgrp docker)"
 }
