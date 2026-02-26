@@ -42,9 +42,9 @@ if [[ "${DEBUG}" == "true" ]]; then
   set -x
 fi
 
-rsync -a --delete --exclude ".git" --exclude "wezterm/static/back.jpg" "${REPO_ROOT}/" "${HOST}:${REMOTE_PATH}/"
+rsync -a --delete --exclude ".git" --exclude "wezterm/static/back.jpg" --exclude "config/wezterm/static/back.jpg" "${REPO_ROOT}/" "${HOST}:${REMOTE_PATH}/"
 
-REMOTE_ARGS=()
+declare -a REMOTE_ARGS=()
 if [[ "${UNATTENDED}" == "true" ]]; then
   REMOTE_ARGS+=("--unattended")
 fi
@@ -56,7 +56,7 @@ if [[ -n "${LOG_FILE}" ]]; then
 fi
 
 REMOTE_CMD_ARGS=""
-for arg in "${REMOTE_ARGS[@]}"; do
+for arg in ${REMOTE_ARGS[@]+"${REMOTE_ARGS[@]}"}; do
   REMOTE_CMD_ARGS+=" $(printf '%q' "$arg")"
 done
 

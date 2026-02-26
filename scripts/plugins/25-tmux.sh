@@ -44,11 +44,12 @@ plugin_run() {
     esac
   fi
 
-  # Use local tmux configuration (~/.tmux.conf) without overriding
+  # Use local tmux configuration; only link template if missing
   if [[ -f "${HOME}/.tmux.conf" || -L "${HOME}/.tmux.conf" ]]; then
     log_info "Using existing ~/.tmux.conf (no link created)"
   else
-    log_info "No ~/.tmux.conf found; leaving it to the user to create"
+    log_info "No ~/.tmux.conf found; linking template from config/tmux"
+    ln -snf "${REPO_ROOT}/config/tmux/.tmux.conf" "${HOME}/.tmux.conf"
   fi
 
   # Ensure TPM is installed for plugin management (idempotent)
