@@ -80,6 +80,38 @@ ensure_symlink() {
   ln -snf "$source" "$target"
 }
 
+# Check if a Debian package is installed.
+apt_pkg_installed() {
+  local pkg="$1"
+  local status
+  status="$(dpkg-query -W -f='${Status}' "$pkg" 2>/dev/null || true)"
+  [[ "$status" == "install ok installed" ]]
+}
+
+# Install packages with apt-get.
+# If apt-get returns non-zero due to unrelated dpkg issues, treat as success
+# when all requested packages are already installed.
+apt_install_tolerant() {
+  if [[ $# -eq 0 ]]; then
+    return 0
+  fi
+
+  if sudo apt-get install -y "$@"; then
+    return 0
+  fi
+
+  local pkg
+  for pkg in "$@"; do
+    if ! apt_pkg_installed "$pkg"; then
+      log_error "apt install failed and package is missing: $pkg"
+      return 1
+    fi
+  done
+
+  log_info "apt returned non-zero, but requested packages are installed; continuing"
+  return 0
+}
+
 # Detect OS kernel and distro ID (Ubuntu/Fedora/etc.)
 detect_os() {
   local kernel

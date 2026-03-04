@@ -15,7 +15,7 @@ plugin_run() {
   else
     case "${DOTFILES_DISTRO}" in
       ubuntu|debian)
-        sudo apt-get install -y zsh git
+        apt_install_tolerant zsh git
         ;;
       fedora)
         sudo dnf install -y zsh git util-linux-user
@@ -25,7 +25,7 @@ plugin_run() {
         ;;
       *)
         if is_command apt-get; then
-          sudo apt-get install -y zsh git
+          apt_install_tolerant zsh git
         elif is_command dnf; then
           sudo dnf install -y zsh git
         elif is_command pacman; then

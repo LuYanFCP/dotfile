@@ -12,14 +12,18 @@ export DOTFILES_REPO_ROOT="${REPO_ROOT}"
 UNATTENDED="false"
 DEBUG="false"
 LOG_FILE=""
+ONLY=""
+SKIP=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
     --unattended) UNATTENDED="true"; shift ;;
     --debug) DEBUG="true"; shift ;;
     --log-file) LOG_FILE="$2"; shift 2 ;;
+    --only) ONLY="$2"; shift 2 ;;
+    --skip) SKIP="$2"; shift 2 ;;
     -h|--help)
-      echo "Usage: bin/install [--unattended] [--debug] [--log-file path]";
+      echo "Usage: bin/install [--unattended] [--debug] [--log-file path] [--only a,b] [--skip x,y]";
       exit 0 ;;
     *) echo "Unknown argument: $1"; exit 1 ;;
   esac
@@ -39,6 +43,12 @@ if [[ "${DEBUG}" == "true" ]]; then
 fi
 if [[ -n "${LOG_FILE}" ]]; then
   PLUGIN_ARGS+=("--log-file" "${LOG_FILE}")
+fi
+if [[ -n "${ONLY}" ]]; then
+  PLUGIN_ARGS+=("--only" "${ONLY}")
+fi
+if [[ -n "${SKIP}" ]]; then
+  PLUGIN_ARGS+=("--skip" "${SKIP}")
 fi
 
 "${REPO_ROOT}/scripts/plugins/run_plugins.sh" "${PLUGIN_ARGS[@]}"

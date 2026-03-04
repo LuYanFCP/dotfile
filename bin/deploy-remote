@@ -3,7 +3,7 @@
 set -euo pipefail
 
 usage() {
-  echo "Usage: $0 --host user@server [--path ~/.dotfiles] [--unattended] [--debug] [--log-file FILE]"
+  echo "Usage: $0 --host user@server [--path ~/.dotfiles] [--unattended] [--debug] [--log-file FILE] [--only a,b] [--skip x,y]"
 }
 
 HOST=""
@@ -11,6 +11,8 @@ REMOTE_PATH="~/.dotfiles"
 UNATTENDED="false"
 DEBUG="false"
 LOG_FILE=""
+ONLY=""
+SKIP=""
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -24,6 +26,10 @@ while [[ $# -gt 0 ]]; do
       DEBUG="true"; shift ;;
     --log-file)
       LOG_FILE="$2"; shift 2 ;;
+    --only)
+      ONLY="$2"; shift 2 ;;
+    --skip)
+      SKIP="$2"; shift 2 ;;
     -h|--help)
       usage; exit 0 ;;
     *)
@@ -53,6 +59,12 @@ if [[ "${DEBUG}" == "true" ]]; then
 fi
 if [[ -n "${LOG_FILE}" ]]; then
   REMOTE_ARGS+=("--log-file" "${LOG_FILE}")
+fi
+if [[ -n "${ONLY}" ]]; then
+  REMOTE_ARGS+=("--only" "${ONLY}")
+fi
+if [[ -n "${SKIP}" ]]; then
+  REMOTE_ARGS+=("--skip" "${SKIP}")
 fi
 
 REMOTE_CMD_ARGS=""

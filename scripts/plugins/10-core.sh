@@ -21,7 +21,7 @@ plugin_run() {
     case "${DOTFILES_DISTRO}" in
       ubuntu|debian)
         sudo apt-get update -y
-        sudo apt-get install -y git wget curl axel autojump rsync unzip
+        apt_install_tolerant git wget curl axel autojump rsync unzip
         ;;
       fedora)
         sudo dnf install -y git wget curl axel autojump rsync unzip
@@ -32,7 +32,7 @@ plugin_run() {
       *)
         if is_command apt-get; then
           sudo apt-get update -y
-          sudo apt-get install -y git wget curl axel autojump rsync unzip
+          apt_install_tolerant git wget curl axel autojump rsync unzip
         elif is_command dnf; then
           sudo dnf install -y git wget curl axel autojump rsync unzip
         elif is_command pacman; then

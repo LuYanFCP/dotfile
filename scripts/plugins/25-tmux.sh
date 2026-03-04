@@ -21,7 +21,7 @@ plugin_run() {
     case "${DOTFILES_DISTRO}" in
       ubuntu|debian)
         sudo apt-get update -y
-        sudo apt-get install -y tmux
+        apt_install_tolerant tmux
         ;;
       fedora)
         sudo dnf install -y tmux
@@ -32,7 +32,7 @@ plugin_run() {
       *)
         if is_command apt-get; then
           sudo apt-get update -y
-          sudo apt-get install -y tmux
+          apt_install_tolerant tmux
         elif is_command dnf; then
           sudo dnf install -y tmux
         elif is_command pacman; then
