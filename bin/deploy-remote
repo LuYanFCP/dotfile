@@ -72,7 +72,8 @@ for arg in ${REMOTE_ARGS[@]+"${REMOTE_ARGS[@]}"}; do
   REMOTE_CMD_ARGS+=" $(printf '%q' "$arg")"
 done
 
-ssh -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${HOST}" "bash -lc 'cd ${REMOTE_PATH} && mkdir -p \"\$(dirname \"${LOG_FILE}\")\" 2>/dev/null || true && chmod +x bin/install && bin/install${REMOTE_CMD_ARGS}'"
+# Force TTY allocation so remote sudo can prompt for password interactively.
+ssh -tt -o BatchMode=yes -o StrictHostKeyChecking=accept-new "${HOST}" "bash -lc 'cd ${REMOTE_PATH} && mkdir -p \"\$(dirname \"${LOG_FILE}\")\" 2>/dev/null || true && chmod +x bin/install && bin/install${REMOTE_CMD_ARGS}'"
 
 echo "Remote deploy complete"
 
