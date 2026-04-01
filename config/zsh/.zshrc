@@ -42,6 +42,10 @@ zplug "zsh-users/zsh-autosuggestions"
 zplug "zsh-users/zsh-syntax-highlighting", defer:2
 zplug "zsh-users/zsh-completions"
 
+# oh-my-zsh libs required by theme/plugins
+zplug "lib/async_prompt", from:oh-my-zsh
+zplug "lib/git", from:oh-my-zsh
+
 # themes
 zplug "themes/crunch", from:oh-my-zsh, as:theme
 
