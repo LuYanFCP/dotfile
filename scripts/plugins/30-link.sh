@@ -22,17 +22,21 @@ plugin_run() {
   fi
 
   # Sync custom tools to ~/.local/bin for both local and remote usage.
+  # Any executable file under tools/ is linked, regardless of extension.
   ensure_dir "${HOME}/.local/bin"
   shopt -s nullglob
-  local tool
-  for tool in "${REPO_ROOT}/tools/"*.sh; do
+  local tool tool_name
+  for tool in "${REPO_ROOT}/tools/"*; do
+    tool_name="$(basename "${tool}")"
+    [[ -f "${tool}" ]] || continue
+    [[ "${tool_name}" == "README.md" ]] && continue
     chmod +x "${tool}" || true
-    ensure_symlink "${tool}" "${HOME}/.local/bin/$(basename "${tool}")"
+    ensure_symlink "${tool}" "${HOME}/.local/bin/${tool_name}"
   done
 
   # Remove stale tool symlinks that point to removed repository scripts.
   local linked_tool link_target
-  for linked_tool in "${HOME}/.local/bin/"*.sh; do
+  for linked_tool in "${HOME}/.local/bin/"*; do
     if [[ -L "${linked_tool}" ]]; then
       link_target="$(readlink "${linked_tool}")"
       if [[ "${link_target}" == "${REPO_ROOT}/tools/"* ]] && [[ ! -e "${link_target}" ]]; then
