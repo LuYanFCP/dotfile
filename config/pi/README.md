@@ -33,7 +33,8 @@ settings are linked, these changes can be reviewed and committed here.
 Place a TypeScript extension in `extensions/my-extension.ts`, or use
 `extensions/my-extension/index.ts` for an extension with multiple files. Pi
 auto-discovers this directory; use `/reload` in a running session after edits.
-Keep `.gitkeep` until the directory has tracked extensions.
+The bundled [subagent extension](extensions/subagent/README.md) adds isolated
+scout, reviewer, and worker agents with single-task and parallel execution.
 
 Other preferences can be added to `settings.json` as needed; model and provider
 choices are initially left at Pi's defaults.
