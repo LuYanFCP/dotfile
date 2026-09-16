@@ -42,3 +42,12 @@ syntax are skipped; review those settings manually. The source is never
 executed, and an existing migration file is preserved.
 
 Run the migration regression checks with `bash tests/test-bashrc-migration.sh`.
+
+### Pi coding agent
+The `46-pi` plugin installs [Pi](https://github.com/badlogic/pi-mono/tree/main/packages/coding-agent)
+with npm into `~/.local`, using the official `@earendil-works/pi-coding-agent`
+package. It requires Node.js 22.19.0 or newer and npm, and skips installation
+when `pi` is already on PATH or executable at `~/.local/bin/pi`.
+
+Install just Pi with `bin/install --only 46-pi --unattended`. Ensure
+`~/.local/bin` is on PATH, then run `pi` and use `/login` to authenticate.
