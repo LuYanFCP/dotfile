@@ -20,9 +20,8 @@ test('Pi registers terminal command/shortcut and handles modes without waiting f
       waitForIdle() { throw new Error('must not wait for the agent'); },
       abort() { throw new Error('must not interrupt the agent'); } };
     await command.handler('help', ctx);
-    assert.match(notices.at(-1)[0], /Use \/terminal/);
-    await shortcut.handler(ctx);
-    assert.match(notices.at(-1)[0], /not running inside tmux/);
+    assert.match(notices.at(-1)[0], /persistent shell overlay/);
+    assert.match(shortcut.description, /Show\/hide/);
     await command.handler('', { ...ctx, mode: 'rpc' });
     assert.equal(notices.at(-1)[1], 'warning');
     assert.equal(extension.tools.size, 0, 'shell is controlled by the user, not an LLM tool');

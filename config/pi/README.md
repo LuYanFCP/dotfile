@@ -36,7 +36,8 @@ auto-discovers this directory; use `/reload` in a running session after edits.
 The bundled [subagent extension](extensions/subagent/README.md) adds isolated
 scout, reviewer, and worker agents with single-task and parallel execution.
 The [terminal extension](extensions/terminal/README.md) adds `/terminal` and
-`Ctrl+Alt+T` to open a tmux shell alongside Pi while the agent keeps running.
+`Ctrl+Alt+T` for a persistent shell overlay while Pi keeps running. tmux is used
+as a background engine; Pi itself can run in any terminal.
 
 Other preferences can be added to `settings.json` as needed; model and provider
 choices are initially left at Pi's defaults.
