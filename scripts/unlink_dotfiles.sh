@@ -18,6 +18,14 @@ for f in \
   fi
 done
 
+# Only remove Pi links owned by this checkout.
+for name in settings.json extensions; do
+  target="${HOME}/.pi/agent/${name}"
+  if [[ -L "$target" ]] && [[ "$(readlink "$target")" == "${REPO_ROOT}/config/pi/${name}" ]]; then
+    rm -f "$target"
+  fi
+done
+
 log_success "Dotfiles unlinked"
 
 

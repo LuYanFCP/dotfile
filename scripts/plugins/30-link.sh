@@ -21,6 +21,10 @@ plugin_run() {
     ensure_symlink "${REPO_ROOT}/wezterm/static/back.jpg" "${HOME}/.config/wezterm/static/back.jpg"
   fi
 
+  # Keep Pi preferences and local extensions in the repository.
+  ensure_symlink "${REPO_ROOT}/config/pi/settings.json" "${HOME}/.pi/agent/settings.json"
+  ensure_symlink "${REPO_ROOT}/config/pi/extensions" "${HOME}/.pi/agent/extensions"
+
   # Sync custom tools to ~/.local/bin for both local and remote usage.
   # Any executable file under tools/ is linked, regardless of extension.
   ensure_dir "${HOME}/.local/bin"

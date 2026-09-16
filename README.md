@@ -51,3 +51,7 @@ when `pi` is already on PATH or executable at `~/.local/bin/pi`.
 
 Install just Pi with `bin/install --only 46-pi --unattended`. Ensure
 `~/.local/bin` is on PATH, then run `pi` and use `/login` to authenticate.
+
+Pi preferences and local extensions live in [`config/pi`](config/pi/README.md).
+The `30-link` plugin links them into `~/.pi/agent`; add future packages to
+`config/pi/settings.json` or local extensions to `config/pi/extensions/`.
