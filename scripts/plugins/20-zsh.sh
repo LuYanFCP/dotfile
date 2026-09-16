@@ -41,6 +41,20 @@ plugin_run() {
     curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh -f || true
   fi
 
+  # Migrate portable settings from .bashrc once without sourcing Bash-specific syntax.
+  local bashrc="${HOME}/.bashrc"
+  local migrated_dir="${HOME}/.config/zsh"
+  local migrated_file="${migrated_dir}/bashrc-migrated.zsh"
+  if [[ -f "${bashrc}" && ! -e "${migrated_file}" ]]; then
+    ensure_dir "${migrated_dir}"
+    # shellcheck source=../migrate_bashrc.sh
+    source "${REPO_ROOT}/scripts/migrate_bashrc.sh"
+    migrate_bashrc "${bashrc}" "${migrated_file}"
+    log_info "Migrated portable .bashrc settings to ${migrated_file}"
+  elif [[ -e "${migrated_file}" ]]; then
+    log_info "Migrated Bash settings already exist; skipping"
+  fi
+
   log_success "zsh and zplug ready"
 }
 

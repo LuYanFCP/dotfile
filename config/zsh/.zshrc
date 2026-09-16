@@ -4,6 +4,11 @@
 
 export PATH="${PATH}:${HOME}/bin:${HOME}/.local/bin"
 
+# Load portable settings migrated from ~/.bashrc.
+if [[ -f "${HOME}/.config/zsh/bashrc-migrated.zsh" ]]; then
+  source "${HOME}/.config/zsh/bashrc-migrated.zsh"
+fi
+
 # Locale (uncomment if needed)
 # export LANG=en_US.UTF-8
 # export LC_ALL=en_US.UTF-8

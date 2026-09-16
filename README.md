@@ -32,3 +32,13 @@ bin/deploy-remote --host user@server --path ~/.dotfiles --unattended
 - Uses `zplug` for Zsh plugin management ([zplug/zplug](https://github.com/zplug/zplug))
 - Scripts are non-interactive by default when `--unattended` is used
 - Safe to re-run; existing files are backed up to `~/.dotfiles_backup`
+
+### Bash settings migration
+The Zsh installer creates `~/.config/zsh/bashrc-migrated.zsh` once from
+standalone portable `export` and `alias` declarations in `~/.bashrc`. Quoted
+multiline values and simple variable references are supported. Conditional
+blocks, functions, here-documents, command substitutions, and unsupported
+syntax are skipped; review those settings manually. The source is never
+executed, and an existing migration file is preserved.
+
+Run the migration regression checks with `bash tests/test-bashrc-migration.sh`.
